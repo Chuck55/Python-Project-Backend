@@ -3,8 +3,8 @@ from sqlalchemy.orm import (
 )
 import sqlalchemy as sa
 from . import classes
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
-
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from marshmallow import fields, post_load
 engine = sa.create_engine(
     "mysql+mysqlconnector://root:Whoohoo55!@localhost:3306/pokemonwebsite", echo=True)
 Session = sessionmaker(bind=engine)
@@ -19,9 +19,13 @@ class UserSchema(SQLAlchemySchema):
     id = auto_field(dump_only=True)
     username = auto_field(required=True)
     email = auto_field(required=True)
+    first_name = fields.Str(required=True, load_only=True)
+    last_name = fields.Str(required=True, load_only=True)
     full_name = fields.Method("get_full_name")
+
     def get_full_name(self, obj):
         return obj.first_name + " " + obj.last_name
+
 
 class PokemonSchema(SQLAlchemySchema):
     class Meta:

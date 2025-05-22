@@ -11,7 +11,8 @@ async def save_user_details():
     """ Saving User to the DB"""
     schema = sql.UserSchema()
     result = schema.load(await request.get_json())
-    sql.insert_user(result)
+    print(schema.dump(result))
+    # sql.insert_user(result)
     return "Got here"
 
 

@@ -16,10 +16,7 @@ class User(Base):
     email = sa.Column(sa.String)
     first_name = sa.Column(sa.String)
     last_name = sa.Column(sa.String)
-    
-    @post_load
-    def make_user(self, data, **kwargs):
-        return User(**data)
+    full_name = sa.Column(sa.String)
 
 
 class Pokemon(Base):
