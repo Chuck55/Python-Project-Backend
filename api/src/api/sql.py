@@ -39,10 +39,10 @@ class PokemonSchema(SQLAlchemySchema):
 
 
 def insert_user(user_schema: UserSchema):
-    print(user_schema)
     with Session() as session:
         session.add(user_schema)
-        session.commit()
+        print(vars(user_schema))
+        # session.commit()
 
 
 def insert_pokemon(pokemon_schema: PokemonSchema):

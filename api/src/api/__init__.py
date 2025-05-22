@@ -11,16 +11,14 @@ async def save_user_details():
     """ Saving User to the DB"""
     schema = sql.UserSchema()
     result = schema.load(await request.get_json())
-    print(schema.dump(result))
-    # sql.insert_user(result)
-    return "Got here"
+    sql.insert_user(result)
+    return schema.dump(result)
 
 
 @app.post("/save_pokemon_details")
 async def save_pokemon_details():
     schema = sql.PokemonSchema()
     result = schema.load(await request.get_json())
-    print(result)
     pokemonService.validatePokemonExists(result["name"])
-    # sql.insert_pokemon(result)
-    return "Got here"
+    sql.insert_pokemon(result)
+    return schema.dump(result)
