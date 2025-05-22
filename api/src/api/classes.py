@@ -22,10 +22,6 @@ class User(Base):
 class Pokemon(Base):
     __tablename__ = "pokemon"
     id = sa.Column(sa.Integer, primary_key=True, index=True)
-    name = sa.Column(sa.String)
+    pokemon_name = sa.Column(sa.String)
     count = sa.Column(sa.Integer)
     user_id = sa.Column(sa.ForeignKey("users.id"), index=True)
-
-    @post_load
-    def make_pokemon(self, data, **kwargs):
-        return Pokemon(**data)
