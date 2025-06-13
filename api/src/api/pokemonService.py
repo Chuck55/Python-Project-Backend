@@ -1,8 +1,7 @@
 import requests
 
 
-def validatePokemonExists(pokemon):
+def validatePokemonExists(pokemon: str):
     response = requests.get(
-        "https://pokeapi.co/api/v2/pokemon/ditto", timeout=10)
-    print(response)
+        "https://pokeapi.co/api/v2/pokemon/" + pokemon, timeout=10)
     return response.status_code == 200

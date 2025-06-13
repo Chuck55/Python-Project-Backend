@@ -16,7 +16,6 @@ class User(Base):
     email = sa.Column(sa.String)
     first_name = sa.Column(sa.String)
     last_name = sa.Column(sa.String)
-    full_name = sa.Column(sa.String)
 
 
 class Pokemon(Base):
