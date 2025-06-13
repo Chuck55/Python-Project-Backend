@@ -6,6 +6,7 @@ from quart_schema import QuartSchema
 from pydantic import BaseModel
 from quart_cors import cors
 
+
 app = Quart(__name__)
 app = cors(app, allow_origin="*")
 QuartSchema(app)
