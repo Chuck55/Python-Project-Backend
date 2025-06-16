@@ -8,7 +8,7 @@ from quart_cors import cors
 
 
 app = Quart(__name__)
-app = cors(app, allow_origin="*")
+app = cors(app, allow_origin="http://localhost:5173")
 QuartSchema(app)
 
 
@@ -17,13 +17,16 @@ class DeletePokemonClass(BaseModel):
     user_id: int
 
 
-@app.post("/save_user_details/")
+@app.post("/save_user_details")
 async def save_user_details():
     """ Saving User to the DB"""
     try:
         schema = sql.UserSchema()
         result = schema.load(await request.get_json())
-        return sql.insert_user(result)
+        if sql.get_user_from_users(result.username):
+            return sql.insert_user(result)
+        else:
+            return "UserName already exists", 400
     except ValidationError as err:
         print(err)
 
@@ -48,7 +51,11 @@ async def delete_pokemon():
 
 @app.get("/get_all_pokemon_for_user")
 async def get_all_pokemon_for_user():
-    user_id = request.args.get("user_id")
-    print(user_id)
-    pokemon_list = sql.get_pokemon_for_user(user_id)
+    pokemon_list = sql.get_pokemon_for_user()
     return jsonify(pokemon_list)
+
+
+@app.get("/get_all_users")
+async def get_all_users():
+    user_list = sql.get_user_list()
+    return jsonify(user_list)

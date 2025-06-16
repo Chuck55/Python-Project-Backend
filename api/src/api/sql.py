@@ -4,7 +4,7 @@ from sqlalchemy.orm import (
 import sqlalchemy as sa
 from . import classes
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-from marshmallow import fields, post_load, validate
+from marshmallow import fields, post_load, pre_load, validate
 engine = sa.create_engine(
     "mysql+mysqlconnector://root:Whoohoo55!@localhost:3306/pokemonwebsite", echo=True)
 Session = sessionmaker(bind=engine)
@@ -23,9 +23,9 @@ class UserSchema(SQLAlchemySchema):
     id = auto_field(dump_only=True)
     username = fields.Str(required=True, validate=validate.Length(5))
     email = fields.Email(required=True)
-    first_name = fields.Str(required=True, load_only=True,
+    first_name = fields.Str(required=True,
                             validate=validate.Length(2))
-    last_name = fields.Str(required=True, load_only=True,
+    last_name = fields.Str(required=True,
                            validate=validate.Length(2))
 
 
@@ -41,6 +41,12 @@ class PokemonSchema(SQLAlchemySchema):
 
     def __repr__(self):
         return f'{self.user_id} has {self.count} {self.name}'
+
+    @pre_load
+    def uppercase_pokemon_name(self, data, **kwargs):
+        if "pokemon_name" in data and data["pokemon_name"]:
+            data["pokemon_name"] = data["pokemon_name"].upper()
+        return data
 
     @post_load
     def make_pokemon(self, data, **kwargs):
@@ -78,8 +84,21 @@ def delete_pokemon(pokemon_name: str, user_id: int):
         return "Pokemon Not Found Under User", 400
 
 
-def get_pokemon_for_user(user_id: int):
+def get_pokemon_for_user():
     with Session() as session:
         pokemon_list = session.query(
-            classes.Pokemon).filter_by(user_id=user_id).all()
+            classes.Pokemon).all()
         return PokemonSchema(many=True).dump(pokemon_list)
+
+
+def get_user_list():
+    with Session() as session:
+        user_list = session.query(classes.User).all()
+        return UserSchema(many=True).dump(user_list)
+
+
+def get_user_from_users(username: str):
+    with Session() as session:
+        user_list = session.query(classes.User).filter_by(
+            username=username).all()
+        return len(user_list) == 0
